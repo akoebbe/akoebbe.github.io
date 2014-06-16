@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Andrew Koebbe</title>
+    <meta name="description" content="">
+    <meta name="author" content="Andrew Koebbe">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://blog.andrewkoebbe.com/theme/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href='//fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+    <link href="http://blog.andrewkoebbe.com/theme/bootstrap.min.css" rel="stylesheet">
+    <link href="http://blog.andrewkoebbe.com/theme/bootstrap.min.responsive.css" rel="stylesheet">
+    <link href="http://blog.andrewkoebbe.com/theme/local.css" rel="stylesheet">
+    <link href="http://blog.andrewkoebbe.com/theme/pygments.css" rel="stylesheet">
+
+    <link rel="shortcut icon" type="image/png" href="http://blog.andrewkoebbe.com/theme/images/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="http://blog.andrewkoebbe.com/theme/images/favicon.ico">
+
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="navbar-inner">
+    <div class="container">
+
+         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+
+        <a class="brand" href="http://blog.andrewkoebbe.com">Andrew Koebbe</a>
+
+        <div class="nav-collapse">
+        <ul class="nav">
+            
+            <li><a href="http://blog.andrewkoebbe.com/pages/resume.html">Resume</a></li>
+        </ul>
+        </div>
+        
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+    <div class="row">
+
+        <div class="span9">
+    <div class='article'>
+        <div class="content-title">
+            <h1>Taking stylesheets to school with Sass, Compass and Susy (Part&nbsp;3)</h1>
+May 16, 2013
+
+by <a class="url fn" href="http://blog.andrewkoebbe.com/author/andrew-koebbe.html">Andrew Koebbe</a>
+ 
+
+
+        </div>
+	
+        <div><!--  -->
+<blockquote>
+This article was based on Susy 1.0 which. So it is now outdated (unless you use the <a class="reference external" href="http://susydocs.oddbird.net/en/latest/susyone/">susyone</a> import). Please see <a class="reference external" href="http://susydocs.oddbird.net/en/latest/upgrade/">Susy&#8217;s upgrade path doc</a> for more information on what has changed between version 1 and 2. I hope to have a new article about version 2 in the near future.</blockquote>
+<p>In <a class="reference external" href="http://blog.andrewkoebbe.com/posts/2013/05/taking-stylesheets-to-school-with-sass-compass-and-susy-part-1/">part 1</a> and <a class="reference external" href="http://blog.andrewkoebbe.com/posts/2013/05/taking-stylesheets-to-school-with-sass-compass-and-susy-part-2/">part 2</a> we covered the problem of <span class="caps">CSS</span> and the solution of Sass and Compass. But what about those fancy grid frameworks that use presentational class names? How can we leverage Sass to get a great responsive grid system and have our semantic class&nbsp;names?</p>
+<div class="section" id="part-3-responsive-stylesheets-and-grid-layout-with-susy">
+<h2>Part 3: Responsive stylesheets and grid layout with&nbsp;Susy</h2>
+<p>There are a number of widely used <span class="caps">CSS</span> grid frameworks. They help keep content aligned and offer standardized units (columns) to size and place your content on the page. These can be great for prototyping, but the downfall of most of these frameworks is the use of presentational class names. And we know that&#8217;s a&nbsp;no-no.</p>
+<p>Responsive design is becoming a common feature of most of our projects as mobile browsing is on its way to surpassing desktop browsing. <span class="caps">CSS</span> Media Queries allow different styles to be applied based on different capabilities of the screen displaying the website, though screen width is by far the most common condition. Media queries are great because of what they allow us to do, but they can be unwieldy as&nbsp;well.</p>
+<p>Let&#8217;s say we&#8217;ve got a two-column section of our site that needs to respond to smaller screens by adjusting to a one-column layout. We&#8217;d set our &quot;columns” to &quot;50%” and float them. Then we&#8217;d create a media query and adjust&nbsp;them.</p>
+<p><span class="caps">CSS</span></p>
+<div class="highlight"><pre><span class="nt">section</span><span class="nc">.overview</span><span class="o">,</span> <span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+  <span class="k">width</span><span class="o">:</span> <span class="m">50</span><span class="o">%</span><span class="p">;</span>
+  <span class="k">float</span><span class="o">:</span> <span class="k">left</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">@media</span> <span class="o">(</span><span class="nt">min-width</span><span class="o">:</span> <span class="nt">600px</span><span class="o">)</span> <span class="p">{</span>
+  <span class="nt">section</span><span class="nc">.overview</span><span class="o">,</span> <span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">100</span><span class="o">%</span><span class="p">;</span>
+    <span class="k">float</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>This is fine for a handful of layout adjustments, but when you have a large number, you are forced to either have a number of &#64;media statements throughout your code or set up one block of all the adjustments even though they may not be near the original&nbsp;style.</p>
+<p>It would be great to harness the power of Sass&#8217;s nesting and mixin features to make grids and media queries simpler. I&#8217;ve got a friend named Susy that can help with&nbsp;that.</p>
+<p>The Susy developers have a great <a class="reference external" href="http://susydocs.oddbird.net/en/latest/install/">&quot;getting started” guide</a> to show you how to install&nbsp;Susy.</p>
+<div class="section" id="susy-s-grid-skills">
+<h3>Susy&#8217;s grid&nbsp;skills</h3>
+<p>Susy needs a few variables to get started — things such as how many columns you want to start with and what size and padding those columns should have. Keep in mind that you can use any units of measure for the variables, but make sure you use the same unit of measure for all of Susy&#8217;s variables. Then we need to set our grid container and the magic&nbsp;begins.</p>
+<p><span class="caps">SCSS</span></p>
+<div class="highlight"><pre><span class="k">@import</span> <span class="n">susy</span><span class="p">;</span>
+
+<span class="nv">$total-columns</span><span class="o">:</span> <span class="mi">12</span><span class="p">;</span>           <span class="c1">// The number of columns you want</span>
+<span class="nv">$column-width</span><span class="o">:</span> <span class="mi">4</span><span class="kt">em</span><span class="p">;</span>           <span class="c1">// How wide each column should be.</span>
+<span class="nv">$gutter-width</span><span class="o">:</span> <span class="mi">1</span><span class="kt">em</span><span class="p">;</span>           <span class="c1">// Spacing between columns</span>
+<span class="nv">$grid-padding</span><span class="o">:</span> <span class="nv">$gutter-width</span><span class="p">;</span> <span class="c1">// Padding on outside the grid</span>
+
+<span class="nn">#page</span> <span class="p">{</span>
+  <span class="k">@include</span><span class="nd"> container</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>Now that we&#8217;ve got Susy started, we can bring our &quot;overview” and &quot;detail” section classes in from the previous example and set them up in&nbsp;Susy.</p>
+<p><span class="caps">SCSS</span></p>
+<div class="highlight"><pre><span class="nt">section</span><span class="nc">.overview</span><span class="o">,</span> <span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+  <span class="k">@include</span><span class="nd"> span-columns</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+  <span class="k">@include</span><span class="nd"> omega</span> <span class="c1">// Omega tells susy this is the last item in the row</span>
+<span class="p">}</span>
+</pre></div>
+<p>Compiled <span class="caps">CSS</span></p>
+<div class="highlight"><pre><span class="nt">section</span><span class="nc">.overview</span><span class="o">,</span> <span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+  <span class="k">width</span><span class="o">:</span> <span class="m">49</span><span class="o">.</span><span class="m">15254</span><span class="o">%</span><span class="p">;</span>
+  <span class="k">float</span><span class="o">:</span> <span class="k">left</span><span class="p">;</span>
+  <span class="k">margin-right</span><span class="o">:</span> <span class="m">1</span><span class="o">.</span><span class="m">69492</span><span class="o">%</span><span class="p">;</span>
+  <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+  <span class="k">float</span><span class="o">:</span> <span class="k">right</span><span class="p">;</span>
+  <span class="k">margin-right</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="m">#margin</span><span class="o">-</span><span class="k">left</span><span class="o">:</span> <span class="m">-1em</span><span class="p">;</span>
+  <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>Wait, what&#8217;s with the percentages? I used &quot;em” as my unit of measure. Susy does the calculations for you and converts the unit to percentages so that your design is fluid. This can be changed with the $container-style variable if you don&#8217;t want a fluid behavior. You can also see that Susy puts in some cross-browser tweaks to make that unmentionable browser&nbsp;happy.</p>
+</div>
+<div class="section" id="susy-s-responsive-skills">
+<h3>Susy&#8217;s responsive&nbsp;skills</h3>
+<p>Now it&#8217;s time to get responsive. Susy brought a handy at-breakpoint mixin to the party that can be nested in the styles we want to&nbsp;adjust.</p>
+<p><span class="caps">SCSS</span></p>
+<div class="highlight"><pre><span class="nt">section</span><span class="nc">.overview</span><span class="o">,</span> <span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+  <span class="k">@include</span><span class="nd"> span-columns</span><span class="p">(</span><span class="mi">6</span><span class="p">);</span>
+
+  <span class="c1">// at-breakpoint(&lt;min-width&gt; &lt;layout&gt; &lt;max-width&gt; &lt;ie-fallback&gt;)</span>
+  <span class="k">@include</span><span class="nd"> at-breakpoint</span><span class="p">(</span><span class="mi">4</span> <span class="mi">600</span><span class="kt">px</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Tell susy to switch to a 4 column grid at 600px</span>
+    <span class="k">@include</span><span class="nd"> span-columns</span><span class="p">(</span><span class="mi">4</span> <span class="n">omega</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+  <span class="k">@include</span><span class="nd"> omega</span><span class="p">;</span> <span class="c1">// Omega tells susy this is the last item in the row</span>
+<span class="p">}</span>
+</pre></div>
+<p>Compiled <span class="caps">CSS</span></p>
+<div class="highlight"><pre><span class="nt">section</span><span class="nc">.overview</span><span class="o">,</span> <span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+  <span class="k">width</span><span class="o">:</span> <span class="m">49</span><span class="o">.</span><span class="m">15254</span><span class="o">%</span><span class="p">;</span>
+  <span class="k">float</span><span class="o">:</span> <span class="k">left</span><span class="p">;</span>
+  <span class="k">margin-right</span><span class="o">:</span> <span class="m">1</span><span class="o">.</span><span class="m">69492</span><span class="o">%</span><span class="p">;</span>
+  <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">@media</span> <span class="o">(</span><span class="nt">max-width</span><span class="o">:</span> <span class="nt">600px</span><span class="o">)</span> <span class="p">{</span>
+  <span class="nt">section</span><span class="nc">.overview</span><span class="o">,</span> <span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+    <span class="k">width</span><span class="o">:</span> <span class="m">100</span><span class="o">%</span><span class="p">;</span>
+    <span class="k">float</span><span class="o">:</span> <span class="k">right</span><span class="p">;</span>
+    <span class="k">margin-right</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nt">section</span><span class="nc">.detail</span> <span class="p">{</span>
+  <span class="k">float</span><span class="o">:</span> <span class="k">right</span><span class="p">;</span>
+  <span class="k">margin-right</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="m">#margin</span><span class="o">-</span><span class="k">left</span><span class="o">:</span> <span class="m">-1em</span><span class="p">;</span>
+  <span class="k">display</span><span class="o">:</span> <span class="k">inline</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>You can see how easy responsive styles are with the at-breakpoint mixin. Right where you define the default layout you can specify all of your breakpoint changes without leaving the definition of the original style. Of course this mixin can work with any style changes (for example, color, display, font, etc.), not just column&nbsp;spanning.</p>
+</div>
+<div class="section" id="susy-next">
+<h3>Susy&nbsp;Next</h3>
+<p>It&#8217;s worth noting that Susy is poised to merge with complementary projects to make it even more powerful. The list of developers on board with this initiative is pretty staggering. <a class="reference external" href="http://oddbird.net/2013/01/01/susy-next/">Great things are in store</a>.</p>
+</div>
+<div class="section" id="sass-compass-and-susy-in-drupal">
+<h3>Sass, Compass and Susy in&nbsp;Drupal</h3>
+<p>A large portion of <span class="caps">VML</span> projects use Drupal as the <span class="caps">CMS</span>. Because Sass is platform-agnostic, we&#8217;ve been able to leverage all of these technologies into the themes of our Drupal&nbsp;projects.</p>
+<p>Susy&#8217;s container-style variable allowed us to set the responsive behavior to a fixed style. The exact width of the container is clearly defined and not fluid. As screens vary slightly, the margin on either side of the page adjusts, but not the content, until you get to a&nbsp;breakpoint.</p>
+</div>
+<div class="section" id="gaining-ground-in-the-drupal-community">
+<h3>Gaining ground in the Drupal&nbsp;Community</h3>
+<p>Recently a <a class="reference external" href="http://groups.drupal.org/node/236988">discussion</a> regarding the theme used for drupal.org (Bluecheese) led the community to select Susy as the framework for refactoring Bluecheese. With this decision, more Drupal themes will start adopting Susy for their responsive and grid&nbsp;features.</p>
+<p>Using these technologies in our projects allows us to be more nimble and efficient as our creative teams continue to push the envelope of design and&nbsp;experience.</p>
+</div>
+</div>
+</div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'akoebbeblog'; 
+    var disqus_title = 'Taking stylesheets to school with Sass, Compass and Susy (Part&nbsp;3)';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+        </div>
+        
+        <div class="span3">
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Site
+                </li>
+            
+                <li><a href="http://blog.andrewkoebbe.com/">Archives</a>
+                <li><a href="http://blog.andrewkoebbe.com/tags.html">Tags</a>
+                <li><a href="http://blog.andrewkoebbe.com/" rel="alternate">Atom feed</a></li>
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Categories
+                </li>
+                
+                <li><a href="http://blog.andrewkoebbe.com/category/development">development</a></li>
+                <li><a href="http://blog.andrewkoebbe.com/category/diyrecipes">DIY/Recipes</a></li>
+                   
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Links
+                </li>
+            
+                <li><a href="http://vml.com/">VML (My employer)</a></li>
+            </ul>
+            </div>
+
+
+            <div class="social">
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Social
+                </li>
+           
+                <li><a href="https://www.linkedin.com/profile/view?id=14776117">LinkedIn</a></li>
+                <li><a href="https://twitter.com/andrewkoebbe">Twitter</a></li>
+                <li><a href="https://github.com/vml-akoebbe">Github</a></li>
+            </ul>
+            </div>
+            </div>
+
+        </div>  
+    </div>     </div> 
+<footer>
+<br />
+<p><a href="http://blog.andrewkoebbe.com">Andrew Koebbe</a> &copy; Andrew Koebbe 2014</p>
+</footer>
+
+</div> <!-- /container -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-collapse.js"></script>
+ 
+</body>
+</html>

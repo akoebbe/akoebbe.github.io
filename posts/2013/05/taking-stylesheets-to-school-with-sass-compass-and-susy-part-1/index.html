@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Andrew Koebbe</title>
+    <meta name="description" content="">
+    <meta name="author" content="Andrew Koebbe">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+    <script src="http://blog.andrewkoebbe.com/theme/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href='//fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+    <link href="http://blog.andrewkoebbe.com/theme/bootstrap.min.css" rel="stylesheet">
+    <link href="http://blog.andrewkoebbe.com/theme/bootstrap.min.responsive.css" rel="stylesheet">
+    <link href="http://blog.andrewkoebbe.com/theme/local.css" rel="stylesheet">
+    <link href="http://blog.andrewkoebbe.com/theme/pygments.css" rel="stylesheet">
+
+    <link rel="shortcut icon" type="image/png" href="http://blog.andrewkoebbe.com/theme/images/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="http://blog.andrewkoebbe.com/theme/images/favicon.ico">
+
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="navbar-inner">
+    <div class="container">
+
+         <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+             <span class="icon-bar"></span>
+         </a>
+
+        <a class="brand" href="http://blog.andrewkoebbe.com">Andrew Koebbe</a>
+
+        <div class="nav-collapse">
+        <ul class="nav">
+            
+            <li><a href="http://blog.andrewkoebbe.com/pages/resume.html">Resume</a></li>
+        </ul>
+        </div>
+        
+    </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="content">
+    <div class="row">
+
+        <div class="span9">
+    <div class='article'>
+        <div class="content-title">
+            <h1>Taking stylesheets to school with Sass, Compass and Susy (Part&nbsp;1)</h1>
+May 14, 2013
+
+by <a class="url fn" href="http://blog.andrewkoebbe.com/author/andrew-koebbe.html">Andrew Koebbe</a>
+ 
+
+
+        </div>
+	
+        <div><p>At work our development teams strive to be more efficient and develop in a way that lets us scale as needed while not coding ourselves into a corner when a client&#8217;s needs change and grow. Implementing the fantastic creative we receive from our design and user experience experts must be done with a solid foundation of markup and&nbsp;stylesheets.</p>
+<div class="section" id="part-1-the-problem-with-css">
+<h2>Part 1: The problem with <span class="caps">CSS</span></h2>
+<p>Any web developer understands the power and frustration of stylesheets. Ever since browsers adopted <span class="caps">CSS</span>, web developers have been bringing more design elements into websites. One of the greatest benefits of stylesheets is keeping all your site styles in one location. But there&#8217;s a problem with stylesheets. <span class="caps">CSS</span> has a terrible syntax for selector hierarchy, making it difficult to manage when you have a lot of&nbsp;styles.</p>
+<div class="section" id="why-not-use-presentational-class-names">
+<h3>Why not use presentational class&nbsp;names?</h3>
+<p>I know some will say, &quot;You&#8217;re doing it wrong if your selectors are too long. Use presentational class names. Just make a bunch of classes for each of the common design aspects (for example, font color, font size, background color, borders) and just slap them on your markup element whenever you need&nbsp;them.”</p>
+<p>So let&#8217;s follow that solution through. If we have a common font color of green in a number of places and we make a common class style called &quot;.green-font,” we can put this class name on all the elements on the site that need a green font. So far, so good. Then we get an email from the creative team stating that the client wants to change the font color to blue. <span class="caps">OK</span>. We change the &quot;color” attribute to blue in our <span class="caps">CSS</span>, but our class name is still &quot;.green-font.” So we can either leave the class name as is and confuse ourselves later when we try to find that blue font color, or we can change the class name and go through all of our markup and replace the &quot;green-font” with the new &quot;blue-font” class. I think we&#8217;d rather avoid that potential&nbsp;problem.</p>
+<p>One solution is to use more abstract classes, such as &quot;loud-text,” but we&#8217;ll still run into a problem of really cluttered class attributes on our&nbsp;elements:</p>
+<div class="highlight"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;loud-text border1 background-dark body-font&quot;</span><span class="nt">&gt;</span>
+</pre></div>
+<p>This can quickly get unmanageable, especially when you&#8217;re dealing with multiple nested templates in a <span class="caps">CMS</span>. This is why presentational class names should be avoided. This also goes for traditional <span class="caps">CSS</span> frameworks (for example, Blueprint and Skeleton). Put simply, your markup should not mention your design aspects, only the semantics of your content. For tips on creating semantic markup see <a class="reference external" href="http://css-tricks.com/semantic-class-names/">http://css-tricks.com/semantic-class-names/</a>.</p>
+</div>
+<div class="section" id="use-the-right-tool-for-the-job">
+<h3>Use the right tool for the&nbsp;job</h3>
+<p>There&#8217;s a practice going on in web development of using almost nothing but <span class="caps">DIV</span> and <span class="caps">SPAN</span> as elements (tags) in markup. While they have their place in our tool box, these elements should be used if nothing else seems to apply. I&#8217;ve seen code that doesn&#8217;t use any header tags (H1, H2, H3, etc.). The heading copy was wrapped in DIVs and styled to look like headings. I understand that a developer may be trying to avoid the variance in default browser styles, but this fails in many situations, including search engine optimization (<span class="caps">SEO</span>) and accessibility. Sometimes we miss out on the additional markup elements such as <span class="caps">EM</span>, <span class="caps">STRONG</span>, <span class="caps">CODE</span>, <span class="caps">CITE</span>, <span class="caps">DL</span>/<span class="caps">DT</span>/<span class="caps">DD</span>, etc. And that&#8217;s only <span class="caps">HTML4</span>. <span class="caps">HTML5</span> gives us many extra elements to structure our markup. Used appropriately, these can actually make your markup more understandable. It&#8217;s a good practice to occasionally disable stylesheets in your browser while you&#8217;re developing and see if the page looks properly structured. To review all of the new elements in <span class="caps">HTML5</span>, see <a class="reference external" href="http://dev.w3.org/html5/html4-differences/#new-elements">here</a> and <a class="reference external" href="http://joshduck.com/periodic-table.html">here</a>.</p>
+<p>Lastly, you shouldn&#8217;t put a class or <span class="caps">ID</span> on an element unless you need to. Developers sometimes forget that you can style elements without an <span class="caps">ID</span> or class. I understand that you need to differentiate the same element when it&#8217;s used in different contexts, but you can use far fewer class attributes by referencing a parent element class to determine your&nbsp;context.</p>
+</div>
+<div class="section" id="but-what-about-the-other-problems-with-css">
+<h3>But what about the other problems with <span class="caps">CSS</span>?</h3>
+<p>Ok, so we understand the reasons to use semantic markup, but we still have to deal with the shortfalls of <span class="caps">CSS</span>:</p>
+<ul class="simple">
+<li>Long and repetitive&nbsp;selectors</li>
+<li>No way to reuse colors and sizes (i.e., no&nbsp;variables)</li>
+<li>No arithmetic&nbsp;operators</li>
+<li>No reusable functions for common design&nbsp;tasks</li>
+</ul>
+<p>What we need is a <span class="caps">CSS</span> scripting language to handle all of these shortcomings — some sort of <strong>S</strong>yntactically <strong>A</strong>wesome <strong>S</strong>tyle<strong>S</strong>heet language.&nbsp;Hmm&#8230;</p>
+<p><a class="reference external" href="http://blog.andrewkoebbe.com/posts/2013/05/taking-stylesheets-to-school-with-sass-compass-and-susy-part-2/">Continue to Part&nbsp;2</a></p>
+</div>
+</div>
+</div>
+	
+        <hr>
+
+        <h2>Comments</h2>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'akoebbeblog'; 
+    var disqus_title = 'Taking stylesheets to school with Sass, Compass and Susy (Part&nbsp;1)';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+        </div>
+        
+        <div class="span3">
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Site
+                </li>
+            
+                <li><a href="http://blog.andrewkoebbe.com/">Archives</a>
+                <li><a href="http://blog.andrewkoebbe.com/tags.html">Tags</a>
+                <li><a href="http://blog.andrewkoebbe.com/" rel="alternate">Atom feed</a></li>
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Categories
+                </li>
+                
+                <li><a href="http://blog.andrewkoebbe.com/category/development">development</a></li>
+                <li><a href="http://blog.andrewkoebbe.com/category/diyrecipes">DIY/Recipes</a></li>
+                   
+            </ul>
+            </div>
+
+
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Links
+                </li>
+            
+                <li><a href="http://vml.com/">VML (My employer)</a></li>
+            </ul>
+            </div>
+
+
+            <div class="social">
+            <div class="well" style="padding: 8px 0; background-color: #FBFBFB;">
+            <ul class="nav nav-list">
+                <li class="nav-header"> 
+                Social
+                </li>
+           
+                <li><a href="https://www.linkedin.com/profile/view?id=14776117">LinkedIn</a></li>
+                <li><a href="https://twitter.com/andrewkoebbe">Twitter</a></li>
+                <li><a href="https://github.com/vml-akoebbe">Github</a></li>
+            </ul>
+            </div>
+            </div>
+
+        </div>  
+    </div>     </div> 
+<footer>
+<br />
+<p><a href="http://blog.andrewkoebbe.com">Andrew Koebbe</a> &copy; Andrew Koebbe 2014</p>
+</footer>
+
+</div> <!-- /container -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-collapse.js"></script>
+ 
+</body>
+</html>
