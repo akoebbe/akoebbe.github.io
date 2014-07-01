@@ -61,8 +61,8 @@
 
     <div class='article'>
         <div class="content-title">
-            <a href="http://blog.andrewkoebbe.com/posts/2014/06/cold-buleberry-oatmeal/"><h1>Grab and go Cold Blueberry Maple&nbsp;Oatmeal</h1></a>
-June 09, 2014
+            <a href="http://blog.andrewkoebbe.com/posts/2014/06/installing-crashplan-headless-on-a-readynas-102/"><h1>Installing Crashplan headless on a ReadyNAS&nbsp;102</h1></a>
+June 29, 2014
 
 by <a class="url fn" href="http://blog.andrewkoebbe.com/author/andrew-koebbe.html">Andrew Koebbe</a>
  
@@ -71,26 +71,153 @@ by <a class="url fn" href="http://blog.andrewkoebbe.com/author/andrew-koebbe.htm
  
         </div>
         
-        <div><p>I&#8217;m a big fan of old fashioned rolled oats with blueberries and brown sugar. But by the time I&#8217;ve microwaved it and let it cool, my son is already done with his breakfast and wanting to play. Plus cleaning stuck on cooked oats from the bowl is really a pain. I found <a class="reference external" href="http://www.theyummylife.com/Refrigerator_Oatmeal">these recipes</a>  on The Yummy Life. These are great recipes but I&#8217;ve come to the conclusion that dry measurements should be in measured in mass (grams) and not volume (cups). Plus it&#8217;s really nice to not have to mess with so many measuring utensils when you can just use a digital scale and zero it out after each ingredient. So I&#8217;ve converted the measurements below for the <a class="reference external" href="http://www.theyummylife.com/recipes/220">Blueberry Maple</a>.</p>
-<div class="section" id="ingredients">
-<h2>Ingredients</h2>
-<ul class="simple">
-<li><strong>25 grams Old Fashioned Rolled&nbsp;Oats</strong></li>
-<li><strong>7 grams Chia&nbsp;Seed</strong></li>
-<li><strong>1/3 cup Milk</strong> - <em>I&#8217;ve used 2% but you should be able to get away with any&nbsp;milk</em></li>
-<li><strong>1/4 cup Greek Yogurt</strong> - <em>This turned out to be around 85g for the brand I&nbsp;have</em></li>
-<li><strong>2 teaspoons Maple Syrup</strong> - <em>Use the real stuff,&nbsp;people</em></li>
-<li><strong>45 grams blueberries, frozen or fresh</strong> - <em>Obviously this amount is&nbsp;preference</em></li>
-</ul>
+        <div><p>Crashplan offers a great online backup solution. Netgear ReadyNAS offers a great home/small office local network storage solution. Here&#8217;s a how to on how-to on how to set your ReadyNAS as a Crashplan&nbsp;client.</p>
+<div class="section" id="step-1-turn-on-ssh-on-your-readynas">
+<h2>Step 1: Turn on <span class="caps">SSH</span> on your&nbsp;ReadyNAS</h2>
+<p>In the ReadyNAS admin head over to the &quot;Settings&quot; tab of the &quot;System&quot; section. Make sure that <span class="caps">SSH</span> is enabled. If you&#8217;ve never turned it on, you will receive a message basically stating &quot;With great power comes great responsibility&quot;. If you&#8217;re not comfortable with ssh and a linux command line, this may not be the solution for&nbsp;you.</p>
 </div>
-<div class="section" id="directions">
-<h2>Directions</h2>
-<p>Pretty simple. Mix all the ingredients in a sealable container like a mason jar. I&#8217;d recommend putting the blueberries in last after mixing the other ingredients, especially if they are fresh. Otherwise they may break apart. Put it in the fridge overnight. It should last for a few days so you can frontload your breakfasts for the&nbsp;week.</p>
+<div class="section" id="step-2-get-crashplan-downloaded-and-installed">
+<h2>Step 2: Get Crashplan downloaded and&nbsp;installed</h2>
+<p>Using your favorite ssh client, ssh to your ReadyNAS <span class="caps">IP</span> address as &quot;root&quot;. The password will be the same as your web interface &quot;admin&quot;&nbsp;password.</p>
+<p>Head over to Crashplan&#8217;s <a class="reference external" href="http://download.code42.com/installs/linux/install/CrashPlan/CrashPlan_3.6.3_Linux.tgz">download page</a> and get the current download <span class="caps">URL</span> for the linux installer. You can copy the <span class="caps">URL</span> from the &quot;restart the download&quot; link on this page. At the time of this writing the current version <span class="caps">URL</span> was <a class="reference external" href="http://download.code42.com/installs/linux/install/CrashPlan/CrashPlan_3.6.3_Linux.tgz">http://download.code42.com/installs/linux/install/CrashPlan/CrashPlan_3.6.3_Linux.tgz</a></p>
+<p>Run the following command on the ReadyNAS using the current version download <span class="caps">URL</span> you found on teh download&nbsp;page.</p>
+<div class="highlight"><pre>wget http://download.code42.com/installs/linux/install/CrashPlan/CrashPlan_3.6.3_Linux.tgz
+</pre></div>
+<p>Apparently the busybox cpio is not compatible with the Crashplan installer, so we&#8217;ll need to uninstall the busybox version and install the proper&nbsp;version.</p>
+<div class="highlight"><pre>apt-get remove busybox-cpio
+apt-get install cpio
+</pre></div>
+<p>We&#8217;ll need to get a java runtime environment installed on the ReadyNAS since Crashplan is a java application. We&#8217;ll also need a <span class="caps">ARM</span> based java library to use in place of the intel version bundled with&nbsp;Crashplan.</p>
+<div class="highlight"><pre>apt-get install openjdk-6-jre-headless
+</pre></div>
+<p>Now you have the installer archive downloaded. It&#8217;s time to decompress and run the installer. (Obviously replace the archive name with the one you&nbsp;downloaded)</p>
+<div class="highlight"><pre>tar xvzf CrashPlan_3.6.3_Linux.tgz
+<span class="nb">cd</span> /CrashPlan-install
+./install.sh
+</pre></div>
+<p>Answer the <span class="caps">EULA</span> and accept all of the defaults. You should get output similar to the following (<span class="caps">EULA</span>&nbsp;removed).</p>
+<pre class="literal-block">
+Welcome to the CrashPlan Installer.
+
+Press enter to continue with installation.
+
+Validating environment...
+  detected root permissions
+49036 blocks
+
+You must review and agree to the EULA before installation.
+
+Press enter to read the EULA.
+
+What directory do you wish to install CrashPlan to? [/usr/local/crashplan]
+
+What directory do you wish to link the CrashPlan executable to? [/usr/local/bin]
+
+What directory do you wish to store backups in? [/usr/local/var/crashplan]
+
+What directory contains your SYSV init scripts? [/etc/init.d]
+
+What directory contains your runlevel init links? [/etc/rc5.d]
+
+Your selections:
+CrashPlan will install to: /usr/local/crashplan
+And put links to binaries in: /usr/local/bin
+And store datas in: /usr/local/var/crashplan
+Your init.d dir is: /etc/init.d
+Your current runlevel directory is: /etc/rc5.d
+
+Is this correct? (y/n) [y] y
+
+Unpacking /./CrashPlan_3.6.3.cpi ...
+49036 blocks
+Starting CrashPlan Engine ... Using standard startup
+OK
+
+CrashPlan has been installed and the Service has been started automatically.
+
+Press Enter to complete installation.
+
+Important directories:
+  Installation:
+    /usr/local/crashplan
+  Logs:
+    /usr/local/crashplan/log
+  Default archive location:
+    /usr/local/var/crashplan
+
+Start Scripts:
+  sudo /usr/local/crashplan/bin/CrashPlanEngine start|stop
+  /usr/local/crashplan/bin/CrashPlanDesktop
+
+You can run the CrashPlan Desktop UI locally as your own user or connect
+a remote Desktop UI to this Service via port-forwarding and manage it
+remotely. Instructions for remote management are in the readme files
+placed in your installation directory:
+  /usr/local/crashplan/doc
+
+
+To start the Desktop UI:
+  /usr/local/bin/CrashPlanDesktop
+
+Installation is complete. Thank you for installing CrashPlan for Linux.
+</pre>
+<p>Now Crashplan comes with a libjtux.so that compiled for intel processors. That&#8217;s not going to work on our <span class="caps">ARM</span> based ReadyNAS, so we&#8217;ll need to replace it with a <span class="caps">ARM</span> based&nbsp;library.</p>
+<p><a class="reference external" href="http://blog.andrewkoebbe.com/static/libjtux.so.gz">Download a precompiled version here</a> and make a backup copy of /usr/local/crashplan/libjtux.so, then decompress the downloaded file and put it in place of the original. Firing up the Crashplan backup engine should now work without&nbsp;dieing.</p>
+<div class="highlight"><pre>/usr/local/crashplan/bin/CrashPlanEngine start
+</pre></div>
+<p>So far so good. Now we need to configure the&nbsp;client.</p>
+</div>
+<div class="section" id="step-3-headless-configuration">
+<h2>Step 3: Headless&nbsp;configuration</h2>
+<p>Since you have to configure Crashplan via a <span class="caps">GUI</span> and the ReadyNAS is headless, we&#8217;ll need to use a desktop app to attach to the client&#8217;s backend. So here&#8217;s the plan: we&#8217;re going to point the desktop client to a non-standard port, then forward that point (via <span class="caps">SSH</span> forwarding) to the correct port on the ReadyNAS. In theory we&#8217;ll only need to do this to get it set up and shouldn&#8217;t need to connect to it this way&nbsp;again.</p>
+<p>Let&#8217;s change the port the desktop app is looking for the client backend. We&#8217;ll need to modify a configuration file for this. Here are the locations for each <span class="caps">OS</span>.</p>
+<pre class="literal-block">
+Linux (if installed as root): /usr/local/crashplan/conf/ui.properties
+Mac: /Applications/CrashPlan.app/Contents/Resources/Java/conf/ui.properties
+Windows: C:\Program Files\CrashPlan\conf\ui.properties​
+</pre>
+<p>In this file we should duplicate the servicePort line, uncomment one of them and set it to&nbsp;4200&#8230;</p>
+<pre class="literal-block">
+#servicePort=4243
+servicePort=4200
+</pre>
+<p>Now we need to forward our local 4200 port to the ReadyNas&#8217;s port 4243. We can do this with <span class="caps">SSH</span>.</p>
+<div class="highlight"><pre>ssh -L 4200:localhost:4243 root@<span class="o">[</span>ReadyNAS IP<span class="o">]</span>
+</pre></div>
+<p>Now fire up your desktop app and you should be greeted with the setup&nbsp;process.</p>
+</div>
+<div class="section" id="credit-where-credit-is-due">
+<h2>Credit where credit is&nbsp;due</h2>
+<p>Here are the articles and threads I&#8217;ve had loaded in by browser as I was working through this. Some of the above is verbatim from some of these&nbsp;sites.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://forum.excito.net/viewtopic.php?f=9&amp;t=3739">http://forum.excito.net/viewtopic.php?f=9&amp;t=3739</a></li>
+<li><a class="reference external" href="http://www.jonrogers.co.uk/2012/05/crashplan-on-the-raspberry-pi/">http://www.jonrogers.co.uk/2012/05/crashplan-on-the-raspberry-pi/</a></li>
+<li><a class="reference external" href="http://www.readynas.com/forum/viewtopic.php?f=4&amp;t=60158">http://www.readynas.com/forum/viewtopic.php?f=4&amp;t=60158</a></li>
+</ul>
 </div>
 </div>
         <hr />
     </div>
 		
+
+ 
+        
+
+ 
+
+    <div class='article'>
+        <a href="http://blog.andrewkoebbe.com/posts/2014/06/cold-buleberry-oatmeal/"><h2>Grab and go Cold Blueberry Maple&nbsp;Oatmeal</h2></a>
+        <div class= "well small"> June 09, 2014
+
+by <a class="url fn" href="http://blog.andrewkoebbe.com/author/andrew-koebbe.html">Andrew Koebbe</a>
+ 
+
+
+ </div>
+        <div class="summary"><p class="first last">This overnight refrigerator oatmeal makes an awesome grab-and-go breakfast. Make a batch for the whole week!</p>
+ <a class="btn btn-info xsmall" href="http://blog.andrewkoebbe.com/posts/2014/06/cold-buleberry-oatmeal/">read more</a></div>
+    </div>	
+				
 
  
         
@@ -172,7 +299,8 @@ by <a class="url fn" href="http://blog.andrewkoebbe.com/author/andrew-koebbe.htm
             
                 <li><a href="http://blog.andrewkoebbe.com/">Archives</a>
                 <li><a href="http://blog.andrewkoebbe.com/tags.html">Tags</a>
-                <li><a href="http://blog.andrewkoebbe.com/" rel="alternate">Atom feed</a></li>
+                <li><a href="http://blog.andrewkoebbe.com/atom.xml" rel="alternate">Atom feed</a></li>
+                <li><a href="http://blog.andrewkoebbe.com/rss.xml" rel="alternate">RSS feed</a></li>
             </ul>
             </div>
 
@@ -185,6 +313,7 @@ by <a class="url fn" href="http://blog.andrewkoebbe.com/author/andrew-koebbe.htm
                 
                 <li><a href="http://blog.andrewkoebbe.com/category/development">development</a></li>
                 <li><a href="http://blog.andrewkoebbe.com/category/diyrecipes">DIY/Recipes</a></li>
+                <li><a href="http://blog.andrewkoebbe.com/category/technology">technology</a></li>
                    
             </ul>
             </div>
